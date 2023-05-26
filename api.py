@@ -1,11 +1,17 @@
 import pymysql
 from app import app
 from config import mysql
-from flask import jsonify, request, flash
+from flask import jsonify, request, flash, render_template
 
-#index that shows all the column of the table i specified that is routed first
+#READ
+#index that shows the basics of this program
 @app.route('/')
-def start():
+def index():
+    return render_template("intro.html")
+
+#route that shows all the table
+@app.route('/tables')
+def tables():
     conn = None
     cursor = None
     try:
@@ -22,6 +28,27 @@ def start():
     finally:
         cursor.close()
         conn.close()
+
+#route that shows a specific row in the table
+@app.route('/tables/<int:customers_id>')
+def selected_row(customers_id):
+    conn = None
+    cursor = None
+    try: 
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        sqlquery = "select customers_id,f_name,l_name from customers where customers_id = %s"
+        cursor.execute(sqlquery, customers_id)
+        customer_row = cursor.fetchone()
+        response = jsonify(customer_row)
+        return response
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
+
 #POST
 @app.route('/create', methods = ['POST'])
 def add_input():
@@ -50,6 +77,7 @@ def add_input():
         cursor.close()
         conn.close()
 
+#error handler that will print a message if you got 404
 @app.errorhandler(404)
 def errormess(error=None):
     message = {
