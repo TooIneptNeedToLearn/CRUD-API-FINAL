@@ -42,10 +42,23 @@ def add_input():
             response = jsonify("Added to table successfully")
             response.status_code = 200
             return response
+        else:
+            return errormess()
     except Exception as e:
         print(e)
     finally:
         cursor.close()
         conn.close()
+
+@app.errorhandler(404)
+def errormess(error=None):
+    message = {
+        'Status': 404,
+        'Message': "Record not found" + request.url
+    }
+    response = jsonify(message)
+    response.status_code = 404
+    return response
+
 if __name__ == "__main__":
     app.run(debug=True)
