@@ -1,7 +1,7 @@
 import pymysql
 from app import app
 from config import mysql
-from flask import jsonify, request, render_template, url_for, redirect, session
+from flask import jsonify, request, render_template, url_for, redirect
 
 #Authentication via login method in home route
 username = "admin"
@@ -36,7 +36,7 @@ def read_index():
     if logged_in:
         return render_template("intro.html")
     else:
-        return redirect(url_for('home'))
+        return render_template("authentication_required.html")
 
 #route that shows all the table
 @app.route('/login/tables')
@@ -59,7 +59,7 @@ def read_tables():
             cursor.close()
             conn.close()
     else:
-        return redirect(url_for('home'))
+        return render_template("authentication_required.html")
 
     
 
@@ -83,7 +83,7 @@ def read_selected_row(customers_id):
             cursor.close()
             conn.close()
     else:
-        return redirect(url_for('home'))
+        return render_template("authentication_required.html")
 
 
 #POST
@@ -115,7 +115,7 @@ def create_add_input():
             cursor.close()
             conn.close()
     else:
-        return redirect(url_for('home'))
+        return render_template("authentication_required.html")
 
 #PUT
 @app.route('/login/update', methods = ['PUT'])
@@ -146,7 +146,7 @@ def update_row():
             cursor.close()
             conn.close()
     else:
-        return redirect(url_for('home'))
+        return render_template("authentication_required.html")
 
 
 #DELETE
@@ -170,7 +170,7 @@ def delete_row(customers_id):
             cursor.close()
             conn.close()
     else:
-        return redirect(url_for('home'))
+        return render_template("authentication_required.html")
 
 #error handler that will print a message if you got 404
 @app.errorhandler(404)
